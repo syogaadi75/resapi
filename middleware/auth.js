@@ -41,3 +41,60 @@ exports.registrasi = (req, res) => {
         }
     })
 }
+
+exports.login = (req, res) => {
+    var post = {
+        email: req.body.email,
+        password: md5(req.body.password),
+    }
+
+    var query = "SELECT * FROM ?? WHERE ?? = ? AND ?? = ?"
+    var table = ['user','email',post.email, 'password' , post.password]
+    query = mysql.format(query, table)
+
+    connection.query(query, (err, rows) => {
+        if(err) {
+            console.log(err)
+        } else {
+            if(rows.length == 1) {
+                var token = jwt.sign({rows}, config.secret, {
+                    expiresIn: 1440
+                })
+
+                var id_user = rows[0].id
+
+                var data = {
+                    id_user: id_user,
+                    access_token: token,
+                    ip_address: ip.address()
+                }
+
+                var query = 'INSERT INTO ?? SET ?'
+                var table = ['access_token']
+                query = mysql.format(query, table)
+
+                connection.query(query, data, (err, rows) => {
+                    if(err) {
+                        console.log(err)
+                    } else {
+                        res.json({
+                            success: true,
+                            message: 'Token JWT tergenerate',
+                            token: token,
+                            currUser: data.id_user
+                        })
+                    }
+                })
+            } else {
+                res.json({
+                    "Error": true,
+                    "Message": "Email atau password salah"
+                })
+            }
+        }
+    })
+}
+
+exports.halamanRahasia = (req, res) => {
+    response.ok('Halaman ini hanya untuk user dengan role 1',res)
+}
