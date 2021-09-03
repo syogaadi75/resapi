@@ -10,7 +10,7 @@ exports.index = function (req, res) {
 exports.tampilsemuamahasiswa = (req, res) => {
     connection.query("SELECT * FROM mahasiswa", (err, rows, field) => {
         if(err) {
-            connection.log(err)
+            console.log(err)
         } else {
             response.ok(rows, res)
         }
@@ -21,7 +21,7 @@ exports.tampilberdasarkanid = (req, res) => {
     var id = req.params.id
     connection.query("SELECT * FROM mahasiswa WHERE id = ?", id , (err, rows, field) => {
         if(err) {
-            connection.log(err)
+            console.log(err)
         } else {
             response.ok(rows, res)
         }
@@ -35,7 +35,7 @@ exports.tambahMahasiswa = (req, res) => {
 
     connection.query("INSERT INTO mahasiswa (nim,nama,jurusan) VALUES (?,?,?)", [nim, nama, jurusan], function(err, rows, field) {
         if(err) {
-            connection.log(err)
+            console.log(err)
         } else {
             response.ok('Berhasil menambah data mahasiswa', res)
         }
@@ -50,7 +50,7 @@ exports.updateMahasiswa = (req, res) => {
 
     connection.query("UPDATE mahasiswa SET nim = ?, nama = ?, jurusan = ? WHERE id = ? ", [nim, nama, jurusan, id], (err, rows, field) => {
         if(err) {
-            connection.log(err)
+            console.log(err)
         } else {
             response.ok('Berhasil mengubah data mahasiswa', res)
         }
@@ -62,9 +62,21 @@ exports.hapusMahasiswa = (req, res) => {
 
     connection.query("DELETE FROM mahasiswa WHERE id = ?", id, (err, rows, field) => {
         if(err) {
-            connection.log(err)
+            console.log(err)
          } else {
             response.ok('Berhasil menghapus data mahasiswa', res)
          }
     })
+}
+
+exports.mahasiswaMatakuliah = (req, res) => {
+    connection.query("SELECT * FROM v_mahasiswa", 
+        (err, rows, field) => {
+            if(err) {
+                console.log(err)
+            } else {
+                response.okNested(rows, res)
+            }
+        }
+    )
 }
