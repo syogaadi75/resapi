@@ -15,7 +15,7 @@ exports.registrasi = (req, res) => {
         tgl_daftar: new Date(), 
     }
 
-    var query = "SELECT email FROM ?? WHERE ?? "
+    var query = "SELECT email FROM ?? WHERE ??=?"
     var table = ['user', 'email', post.email]
     query = mysql.format(query, table)
     
@@ -36,7 +36,7 @@ exports.registrasi = (req, res) => {
                 })
 
             } else {
-                response.ok('Email sudah terdaftar')
+                response.ok('Email sudah terdaftar',res)
             }
         }
     })
